@@ -32,7 +32,14 @@ class MyWebServer(socketserver.BaseRequestHandler):
     def handle(self):
         self.data = self.request.recv(1024).strip()
         print ("Got a request of: %s\n" % self.data)
-        self.request.sendall(bytearray("OK",'utf-8'))
+        #self.request.sendall(bytearray("OK",'utf-8'))
+        path = "./www/index.html"
+        deeperPath = "./www/deep/index.html"
+        status = "HTTP/1.1 200 OK\n"
+
+        htmlFile = open(path, "r").read()
+        self.request.send((status + htmlFile).encode('utf-8'))
+
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
