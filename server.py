@@ -28,26 +28,50 @@ import socketserver
 
 
 class MyWebServer(socketserver.BaseRequestHandler):
-    
-    def handle(self):
-        self.data = self.request.recv(1024).strip()
-        print ("Got a request of: %s\n" % self.data)
-        #self.request.sendall(bytearray("OK",'utf-8'))
-        path = "./www/index.html"
-        deeperPath = "./www/deep/index.html"
-        status = "HTTP/1.1 200 OK\n"
 
-        htmlFile = open(path, "r").read()
-        self.request.send((status + htmlFile).encode('utf-8'))
+	def handle(self):
+		self.data = self.request.recv(1024).strip()
+		request = self.data.decode("utf-8").split("\r\n")[0]
+
+		print ("Got a request of: %s\n" % request)
+		#self.request.sendall(bytearray("OK",'utf-8'))
+
+		status = "HTTP/1.1 200 OK\n"
+		contentTypeHTML = "Content-Type: text/html\n\n"		
+		indexPath = "./www/index.html" 
+		if 'deep' in request:
+			indexPath = "./www/deep/index.html"
+
+		htmlFile = open(indexPath, "r").read()
+		Response = status + contentTypeHTML + htmlFile
+
+		if 'css' in request:
+			cssPath = "./www/base.css"
+			if 'deep' in request:
+				cssPath = "./www/deep/deep.css"
+
+			cssFile = open(cssPath, "r").read()
+			contentTypeCSS = "Content-Type: text/css\n\n"
+			Response = status + contentTypeCSS + cssFile	
+
+		
+		if "GET" not in request:
+			Response = "HTTP/1.1 405 Method Not Allowed\n"
+
+
+		self.request.sendall(bytearray(Response,'utf-8'))	
+		#if '/deep/index.html' in str(self.data):
+			#htmlFile = open(deeperPath, "r").read()
+			#self.request.send((status + htmlFile).encode('utf-8'))
 
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 8080
+	HOST, PORT = "localhost", 8080
 
-    socketserver.TCPServer.allow_reuse_address = True
-    # Create the server, binding to localhost on port 8080
-    server = socketserver.TCPServer((HOST, PORT), MyWebServer)
+	socketserver.TCPServer.allow_reuse_address = True
+	# Create the server, binding to localhost on port 8080
+	server = socketserver.TCPServer((HOST, PORT), MyWebServer)
 
-    # Activate the server; this will keep running until you
-    # interrupt the program with Ctrl-C
-    server.serve_forever()
+	# Activate the server; this will keep running until you
+	# interrupt the program with Ctrl-C
+	server.serve_forever()
