@@ -33,36 +33,36 @@ class MyWebServer(socketserver.BaseRequestHandler):
 		self.data = self.request.recv(1024).strip()
 		request = self.data.decode("utf-8").split("\r\n")[0]
 
-		print ("Got a request of: %s\n" % request)
-		#self.request.sendall(bytearray("OK",'utf-8'))
+		if (request):
+			print ("Got a request of: %s\n" % request)
+			requestDetails = request.split(" ")
 
-		status = "HTTP/1.1 200 OK\n"
-		contentTypeHTML = "Content-Type: text/html\n\n"		
-		indexPath = "./www/index.html" 
-		if 'deep' in request:
-			indexPath = "./www/deep/index.html"
+			#self.request.sendall(bytearray("OK",'utf-8'))
 
-		htmlFile = open(indexPath, "r").read()
-		Response = status + contentTypeHTML + htmlFile
+			status = "HTTP/1.1 200 OK\n"
+			contentType = "Content-Type: text/html\n\n"		
 
-		if 'css' in request:
-			cssPath = "./www/base.css"
-			if 'deep' in request:
-				cssPath = "./www/deep/deep.css"
-
-			cssFile = open(cssPath, "r").read()
-			contentTypeCSS = "Content-Type: text/css\n\n"
-			Response = status + contentTypeCSS + cssFile	
-
-		
-		if "GET" not in request:
-			Response = "HTTP/1.1 405 Method Not Allowed\n"
+			if '.css' in request:
+				contentType = "Content-Type: text/css\n\n"
 
 
-		self.request.sendall(bytearray(Response,'utf-8'))	
-		#if '/deep/index.html' in str(self.data):
-			#htmlFile = open(deeperPath, "r").read()
-			#self.request.send((status + htmlFile).encode('utf-8'))
+			FilePath = requestDetails[1]
+			if FilePath == "/":
+				FilePath = "index.html"
+
+			try: 
+				File = open('./www/' + FilePath, "r").read()
+			except:
+				status = 'HTTP/1.1 404 Not Found\r\n'
+				contentType = ''
+				File = "404 - The page you're looking for could not be found"
+
+			Response = status + contentType + File			
+			if "GET" not in request:
+				Response = "HTTP/1.1 405 Method Not Allowed\n"
+
+			#print("Response == %s\n", Response)
+			self.request.sendall(bytearray(Response,'utf-8'))	
 
 
 if __name__ == "__main__":
