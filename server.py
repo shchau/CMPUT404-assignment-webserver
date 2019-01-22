@@ -47,26 +47,36 @@ class MyWebServer(socketserver.BaseRequestHandler):
 				contentType = "Content-Type: text/css\n\n"
 
 
-			FilePath = requestDetails[1]
-			if ("etc" not in FilePath):
-				if FilePath[-1] == "/" :
-					FilePath = requestDetails[1] + "index.html"
 
-				try:
-					File = open('./www/' + FilePath, "r").read()
-				except:
+			FilePath = requestDetails[1]
+
+
+			if FilePath[-1] == "/" :
+				FilePath = requestDetails[1] + "index.html"
+
+
+			try:
+				File = open('www/' + FilePath, "r").read()
+				
+				originalPath = os.getcwd()
+				testPath = os.path.abspath(FilePath[1:])
+				if originalPath not in testPath:
 					status = 'HTTP/1.1 404 Not Found\r\n'
 					contentType = ''
 					File = "404 - Not Found"
-			else:
+
+			except:
 				status = 'HTTP/1.1 404 Not Found\r\n'
 				contentType = ''
 				File = "404 - Not Found"
+			
+
+
 			Response = status + contentType + File			
 			if "GET" not in request:
 				Response = "HTTP/1.1 405 Method Not Allowed\n"
 
-			print("Response == %s\n", Response)
+			#print("Response == %s\n", Response)
 			self.request.sendall(bytearray(Response,'utf-8'))	
 
 
