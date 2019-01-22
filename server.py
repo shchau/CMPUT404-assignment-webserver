@@ -50,7 +50,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
 			FilePath = requestDetails[1]
 			if ("etc" not in FilePath):
 				if FilePath[-1] == "/" :
-					FilePath = "index.html"
+					FilePath = requestDetails[1] + "index.html"
 
 				try:
 					File = open('./www/' + FilePath, "r").read()
@@ -66,7 +66,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
 			if "GET" not in request:
 				Response = "HTTP/1.1 405 Method Not Allowed\n"
 
-			#print("Response == %s\n", Response)
+			print("Response == %s\n", Response)
 			self.request.sendall(bytearray(Response,'utf-8'))	
 
 
