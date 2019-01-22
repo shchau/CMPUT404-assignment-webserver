@@ -1,5 +1,6 @@
 #  coding: utf-8 
 import socketserver
+import os
 
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
 # 
@@ -47,16 +48,20 @@ class MyWebServer(socketserver.BaseRequestHandler):
 
 
 			FilePath = requestDetails[1]
-			if FilePath == "/":
-				FilePath = "index.html"
+			if ("etc" not in FilePath):
+				if FilePath[-1] == "/" :
+					FilePath = "index.html"
 
-			try: 
-				File = open('./www/' + FilePath, "r").read()
-			except:
+				try:
+					File = open('./www/' + FilePath, "r").read()
+				except:
+					status = 'HTTP/1.1 404 Not Found\r\n'
+					contentType = ''
+					File = "404 - Not Found"
+			else:
 				status = 'HTTP/1.1 404 Not Found\r\n'
 				contentType = ''
-				File = "404 - The page you're looking for could not be found"
-
+				File = "404 - Not Found"
 			Response = status + contentType + File			
 			if "GET" not in request:
 				Response = "HTTP/1.1 405 Method Not Allowed\n"
