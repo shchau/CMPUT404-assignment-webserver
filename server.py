@@ -62,19 +62,16 @@ class MyWebServer(socketserver.BaseRequestHandler):
 				testPath = os.path.abspath(FilePath[1:])
 				if originalPath not in testPath:
 					status = 'HTTP/1.1 404 Not Found\r\n'
-					contentType = ''
 					File = "404 - Not Found"
 
 
 			except:
 				status = 'HTTP/1.1 404 Not Found\r\n'
-				contentType = ''
 				File = "404 - Not Found"
 			
 
 			if os.path.isdir('www/' + FilePath[1:]) and FilePath[-1] != "/":
 				status = 'HTTP/1.1 301 Moved Permanently\r\n'
-				contentType = ''
 				File = 'Location: Moved to ' + str(FilePath) + '/'
 
 
