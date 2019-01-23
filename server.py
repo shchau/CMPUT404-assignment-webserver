@@ -65,16 +65,22 @@ class MyWebServer(socketserver.BaseRequestHandler):
 					contentType = ''
 					File = "404 - Not Found"
 
+
 			except:
 				status = 'HTTP/1.1 404 Not Found\r\n'
 				contentType = ''
 				File = "404 - Not Found"
 			
 
+			if os.path.isdir('www/' + FilePath[1:]) and FilePath[-1] != "/":
+				status = 'HTTP/1.1 301 Moved Permanently\r\n'
+				contentType = ''
+				File = 'Location: Moved to ' + str(FilePath) + '/'
+
 
 			Response = status + contentType + File			
 			if "GET" not in request:
-				Response = "HTTP/1.1 405 Method Not Allowed\n"
+				Response = "HTTP/1.1 405 Method Not Allowed\r\n"
 
 			#print("Response == %s\n", Response)
 			self.request.sendall(bytearray(Response,'utf-8'))	
