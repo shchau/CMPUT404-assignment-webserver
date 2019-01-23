@@ -41,6 +41,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
 			#self.request.sendall(bytearray("OK",'utf-8'))
 
 			status = "HTTP/1.1 200 OK\n"
+			Location = ""
 			contentType = "Content-Type: text/html\n\n"		
 
 			if '.css' in request:
@@ -72,10 +73,10 @@ class MyWebServer(socketserver.BaseRequestHandler):
 
 			if os.path.isdir('www/' + FilePath[1:]) and FilePath[-1] != "/":
 				status = 'HTTP/1.1 301 Moved Permanently\r\n'
-				File = 'Location: Moved to ' + str(FilePath) + '/'
+				Location = 'Location: ' + str(FilePath) + '/\n'
 
 
-			Response = status + contentType + File			
+			Response = status + Location + contentType + File			
 			if "GET" not in request:
 				Response = "HTTP/1.1 405 Method Not Allowed\r\n"
 
