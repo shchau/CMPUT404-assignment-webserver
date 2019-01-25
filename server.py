@@ -2,7 +2,7 @@
 import socketserver
 import os
 
-# Copyright 2013 Abram Hindle, Eddie Antonio Santos
+# Copyright 2019 Simon Chau
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -74,6 +74,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
 			if os.path.isdir('www/' + FilePath[1:]) and FilePath[-1] != "/":
 				status = 'HTTP/1.1 301 Moved Permanently\r\n'
 				Location = 'Location: ' + str(FilePath) + '/\n'
+				File = ""
 
 
 			Response = status + Location + contentType + File			
