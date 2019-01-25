@@ -71,7 +71,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
 				File = "404 - Not Found"
 			
 	
-			if os.path.isdir('www/' + FilePath[1:]) and (FilePath[-1] != "/" or FilePath[-2:] == ".."):
+			if os.path.isdir('www/' + FilePath[1:]) and FilePath[-1] != "/":
 				status = 'HTTP/1.1 301 Moved Permanently\r\n'
 				Location = 'Location: ' + str(FilePath) + '/\n'
 				File = ""
